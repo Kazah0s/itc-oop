@@ -16,7 +16,9 @@ class TextInput {
     }else if (container instanceof HTMLElement){
       this.container = container;
     }
-
   }
-  this.create (_name, value);
+  create(name, value){
+    
+  }
+
 }
