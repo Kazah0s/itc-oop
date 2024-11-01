@@ -11,6 +11,8 @@
 //
 // 2. Напишите метод getData, который просто вернет this.data,
 //   чтобы не залезать внутрь объекта каждый раз
+//// 2. Напишите метод getData, который просто вернет this.data,
+//   чтобы не залезать внутрь объекта каждый раз
 //
 // 3. Напишите метод getUpdater
 //   Этот метод не принимает никаких параметров.
@@ -19,13 +21,30 @@
 //
 class DataContainer {
   constructor(data = {}) {
+    this.data = {...data}    
+  }
+  getData(){
+    return this.data;
+  }
+
+  getUpdater(){
+    return (name, value) =>{
+      this.data[name] = value;
+    }
   }
 }
+
+
+
+
 
 // 4. Допишите конструктор, сохраните входные параметры
 //
 class BaseInput {
   constructor(name, value = '', label = name) {
+    this.name = name;
+    this.value = value;
+    this.label = label;
   }
 }
 
@@ -45,9 +64,35 @@ class BaseInput {
 //
 class TextInput extends BaseInput {
   render(container) {
+      
+    const id = this.name + "_id"
+
+    const div = document.createElement("div");
+
+    const label = document.createElement("label");
+    label.setAttribute("for", id);
+    div.appendChild(label); 
+    label.textContent = this.label;
+
+
+    const input = document.createElement("input");
+    input.setAttribute("id", id);
+    input.setAttribute("type", "text");
+    input.setAttribute("name", this.name);
+    input.setAttribute("value", this.value);
+    div.appendChild(input);
+
+    container.appendChild(div);
+    
+    this.input = input;
   }
 
   subscribe(updater) {
+    const handler = () => {
+      updater(this.name, this.input.value)
+    }
+    this.input.addEventListener("input", handler);
+
   }
 }
 
@@ -61,8 +106,27 @@ class TextInput extends BaseInput {
 //
 class CheckboxInput extends BaseInput {
   render(container) {
+    const div = document.createElement("div")
+    const label = document.createElement("label")
+
+    const input = document.createElement("input")
+    
+    input.setAttribute("type", "checkbox");
+    input.setAttribute("name", this.name);
+    if (this.value){
+      input.setAttribute("checked", "checked");
+    } 
+    label.textContent = this.label;
+    div.appendChild(label);
+    div.appendChild(input);
+    container.appendChild(div);
+    this.input = input;
   }
 
   subscribe(updater) {
+        const handler = () => {
+      updater(this.name, this.input.checked)
+    }
+    this.input.addEventListener("input", handler);
   }
 }
